@@ -25,6 +25,7 @@ class Cafe(db.Model):
     coffee_price = db.Column(db.String(250), nullable=True)
 
 
+# Helper Methods
 def to_dict(cafe):
     cafe_dict = {
         "name": cafe.name,
@@ -45,6 +46,13 @@ def to_dict(cafe):
     return cafe_dict
 
 
+def check_bool(has_attribute):
+    if has_attribute in ["true", "True", "1"]:
+        return True
+    return False
+
+
+# Routes
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -86,7 +94,39 @@ def search_cafe():
     else:
         return "Location not found"
 
+
 # HTTP POST - Create Record
+@app.route("/add", methods=["POST"])
+def add_cafe():
+    new_cafe = Cafe()
+    new_cafe.name = request.form.get("name")
+    new_cafe.map_url = request.form.get("map_url")
+    new_cafe.img_url = request.form.get("img_url")
+    new_cafe.location = request.form.get("location")
+    new_cafe.seats = request.form.get("seats")
+    new_cafe.has_toilet = check_bool(request.form.get("has_toilet"))
+    new_cafe.has_wifi = check_bool(request.form.get("has_wifi"))
+    new_cafe.has_sockets = check_bool(request.form.get("has_sockets"))
+    new_cafe.can_take_calls = check_bool(request.form.get("can_take_calls"))
+    new_cafe.coffee_price = request.form.get("coffee_price")
+    try:
+        db.session.add(new_cafe)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "response": {
+                    "failure": "Cafe could not be added!"
+                }
+            }
+        )
+    return jsonify(
+        {
+            "response": {
+                "success": "Successfuly added the new cafe!"
+            }
+        }
+    )
 
 # HTTP PUT/PATCH - Update Record
 

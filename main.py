@@ -141,7 +141,20 @@ def update_price(cafe_id):
     except:
         return jsonify({"response": {"failure": "Update failed!"}})
     return jsonify({"response": {"success": f"Coffee Price updated successfully for Cafe {cafe_id}!"}})
+
+
 # HTTP DELETE - Delete Record
+@app.route("/report-closed/<int:cafe_id>", methods=["DELETE"])
+def delete_cafe(cafe_id):
+    if request.args.get("api-key") != "TopSecretAPIKey":
+        return jsonify(error={"error": "Sorry you can't perform this action!"}), 403
+    try:
+        cafe = Cafe.query.filter_by(id=cafe_id).first()
+        db.session.delete(cafe)
+        db.session.commit()
+    except:
+        return jsonify(error={"error": "Sorry a cafe with this ID doesn't exist!"}), 404
+    return jsonify(success={"success": f"Cafe with ID {cafe_id} deleted successfully!"})
 
 
 if __name__ == '__main__':

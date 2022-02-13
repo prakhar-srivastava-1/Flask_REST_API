@@ -28,6 +28,7 @@ class Cafe(db.Model):
 # Helper Methods
 def to_dict(cafe):
     cafe_dict = {
+        "id": cafe.id,
         "name": cafe.name,
         "map_url": cafe.map_url,
         "img_url": cafe.img_url,

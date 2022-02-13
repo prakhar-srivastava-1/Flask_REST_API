@@ -129,7 +129,11 @@ def add_cafe():
         }
     )
 
+
 # HTTP PUT/PATCH - Update Record
+@app.route("/update-price/<int:id>", methods=["PATCH"])
+def update_price(id):
+    return jsonify(id)
 
 # HTTP DELETE - Delete Record
 

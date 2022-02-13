@@ -70,6 +70,22 @@ def all_cafes():
     cafe_list = [to_dict(cafe) for cafe in cafes]
     return jsonify(cafe_list)
 
+
+# HTTP GET - Fetch Cafe in a particular location
+@app.route("/search")
+def search_cafe():
+    if request.args.get("location"):
+        location = request.args.get("location")
+
+        cafes = Cafe.query.filter_by(location=location).all()
+        print(cafes)
+        if cafes:
+            return jsonify([to_dict(cafe) for cafe in cafes])
+        else:
+            return "No cafe exist at this location!"
+    else:
+        return "Location not found"
+
 # HTTP POST - Create Record
 
 # HTTP PUT/PATCH - Update Record

@@ -25,6 +25,26 @@ class Cafe(db.Model):
     coffee_price = db.Column(db.String(250), nullable=True)
 
 
+def to_dict(cafe):
+    cafe_dict = {
+        "name": cafe.name,
+        "map_url": cafe.map_url,
+        "img_url": cafe.img_url,
+        "location": cafe.location,
+
+        # add amenities as a separate attribute
+        "amenities": {
+            "seats": cafe.seats,
+            "has_toilet": cafe.has_toilet,
+            "has_wifi": cafe.has_wifi,
+            "has_sockets": cafe.has_sockets,
+            "can_take_calls": cafe.can_take_calls,
+            "coffee_price": cafe.coffee_price,
+        }
+    }
+    return cafe_dict
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -37,24 +57,18 @@ def get_random_cafe():
     random_cafe = choice(cafes)
 
     # construct dict
-    cafe = {
-        "name": random_cafe.name,
-        "map_url": random_cafe.name,
-        "img_url": random_cafe.name,
-        "location": random_cafe.name,
-
-        # add amenities as a separate attribute
-        "amenities": {
-            "seats": random_cafe.seats,
-            "has_toilet": random_cafe.has_toilet,
-            "has_wifi": random_cafe.has_wifi,
-            "has_sockets": random_cafe.has_sockets,
-            "can_take_calls": random_cafe.can_take_calls,
-            "coffee_price": random_cafe.coffee_price,
-        }
-    }
+    cafe = to_dict(random_cafe)
     return jsonify(cafe)
 
+
+# HTTP GET - All cafes
+@app.route("/all")
+def all_cafes():
+    cafes = Cafe.query.all()
+    # make a method that creates dictionary for all cafe objects
+    # loop through all cafes and create a list of dictionaries
+    cafe_list = [to_dict(cafe) for cafe in cafes]
+    return jsonify(cafe_list)
 
 # HTTP POST - Create Record
 

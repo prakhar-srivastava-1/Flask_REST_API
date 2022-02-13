@@ -131,10 +131,16 @@ def add_cafe():
 
 
 # HTTP PUT/PATCH - Update Record
-@app.route("/update-price/<int:id>", methods=["PATCH"])
-def update_price(id):
-    return jsonify(id)
-
+@app.route("/update-price/<int:cafe_id>", methods=["PATCH"])
+def update_price(cafe_id):
+    # grab the cafe object
+    cafe = Cafe.query.filter_by(id=cafe_id).first()
+    try:
+        cafe.coffee_price = request.args.get("new_price")
+        db.session.commit()
+    except:
+        return jsonify({"response": {"failure": "Update failed!"}})
+    return jsonify({"response": {"success": f"Coffee Price updated successfully for Cafe {cafe_id}!"}})
 # HTTP DELETE - Delete Record
 
 
